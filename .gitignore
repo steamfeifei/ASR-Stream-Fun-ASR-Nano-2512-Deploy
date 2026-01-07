@@ -1,0 +1,70 @@
+*.env
+*.log
+*.wav
+*.mp3
+*.ogg
+*.flac
+*.m4a
+*.m4b
+*.m4p
+*.m4v
+*.m4b
+*.m4p
+*.m4v
+*.m4b
+temp_audio/
+models/
+__pycache__/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Visual Studio Code files
+.vscode
+.vs
+
+# PyCharm files
+.idea
+
+# Eclipse Project settings
+*.*project
+.settings
+
+# Sublime Text settings
+*.sublime-workspace
+*.sublime-project
+
+# Editor temporaries
+*.swn
+*.swo
+*.swp
+*.swm
+*~
+
+# IPython notebook checkpoints
+.ipynb_checkpoints
+
+# macOS dir files
+.DS_Store
+
+exp
+data
+raw_wav
+tensorboard
+**/*build*
+
+# Clangd files
+.cache
+compile_commands.json
+
+# train/inference files
+*.wav
+*.m4a
+*.aac
+*.pt
+pretrained_models/*
+*_pb2_grpc.py
+*_pb2.py
+*.tar
