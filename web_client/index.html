@@ -226,14 +226,33 @@ FunASR-Nano-2512 ASR Web Client
         async function startRecording() {
             try {
                 // 1. Initialize WebSocket
-                const url = wsUrlInput.value;
+                const url = wsUrlInput.value.trim();
+                
+                // 验证 URL 格式
+                if (!url || (!url.startsWith("ws://") && !url.startsWith("wss://"))) {
+                    alert("请输入正确的 WebSocket 地址，格式: ws://IP:端口 或 wss://IP:端口");
+                    return;
+                }
+                
                 // 重要: 服务端指定了 subprotocols=["binary"]，客户端必须匹配，否则握手失败
                 ws = new WebSocket(url, ["binary"]);
                 ws.binaryType = "arraybuffer";
 
                 updateStatus("正在连接...", "status-disconnected");
-
+                
+                // 添加连接超时处理（10秒）
+                const connectTimeout = setTimeout(() => {
+                    if (ws && ws.readyState !== WebSocket.OPEN) {
+                        log("连接超时: 10秒内未能建立连接");
+                        updateStatus("连接超时: 请检查服务器是否运行，端口是否正确", "status-disconnected");
+                        if (ws) ws.close();
+                        stopRecording();
+                    }
+                }, 10000);
+                
+                // 连接成功后清除超时
                 ws.onopen = () => {
+                    clearTimeout(connectTimeout);
                     log("WebSocket Connected");
                     updateStatus("已连接，正在录音...", "status-connected");
 
@@ -269,12 +288,16 @@ FunASR-Nano-2512 ASR Web Client
                 };
 
                 ws.onerror = (e) => {
-                    log("WS Error: " + e);
-                    updateStatus("WebSocket 错误", "status-disconnected");
+                    clearTimeout(connectTimeout);
+                    const errorMsg = `WebSocket 连接错误: ${e.message || '无法连接到服务器'}`;
+                    log("WS Error: " + errorMsg);
+                    console.error("WebSocket Error Details:", e);
+                    updateStatus("连接失败: 请检查服务器地址和端口是否正确", "status-disconnected");
                     stopRecording();
                 };
 
                 ws.onclose = () => {
+                    clearTimeout(connectTimeout);
                     log("WS Closed");
                     if (isRecording) stopRecording();
                     updateStatus("连接已断开", "status-disconnected");

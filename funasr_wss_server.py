@@ -516,11 +516,11 @@ async def main():
         ssl_key = args.keyfile
         ssl_context.load_cert_chain(ssl_cert, keyfile=ssl_key)
         start_server = websockets.serve(
-            ws_serve, args.host, args.port, subprotocols=None, ping_interval=None, ssl=ssl_context
+            ws_serve, args.host, args.port, subprotocols=["binary"], ping_interval=None, ssl=ssl_context
         )
     else:
         start_server = websockets.serve(
-            ws_serve, args.host, args.port, subprotocols=None, ping_interval=None
+            ws_serve, args.host, args.port, subprotocols=["binary"], ping_interval=None
         )
     print(f"服务已启动，监听地址: ws://{args.host}:{args.port}", flush=True)
     await start_server
